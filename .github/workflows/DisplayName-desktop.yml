@@ -1,0 +1,72 @@
+name: Developer Role
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  developer-setup:
+    name: Developer Setup Job
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js (if required)
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+
+      - name: Install Dependencies
+        run: npm install
+        working-directory: ./src
+
+      - name: Run Tests
+        run: npm test
+        working-directory: ./src
+
+      - name: Build Application
+        run: npm run build
+        working-directory: ./src
+
+      - name: Set up .NET Core (if required)
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0'
+
+      - name: Restore Dependencies
+        run: dotnet restore
+        working-directory: ./backend
+
+      - name: Build and Publish
+        run: |
+          dotnet build --configuration Release
+          dotnet publish -o ./publish
+        working-directory: ./backend
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: application-build
+          path: ./backend/publish
+
+      - name: Notify Developer Team
+        if: failure()
+        uses: slackapi/slack-github-action@v1.25.0
+        with:
+          payload: |
+            {
+              "text": "Build failed! Check the logs for details.",
+              "attachments": [
+                {
+                  "text": "Action: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}>"
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
