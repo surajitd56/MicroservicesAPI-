@@ -1,0 +1,56 @@
+name: .NET Core 8 CI/CD with Developer Log
+
+on:
+  push:
+    branches:
+      - main  # Adjust this to your primary branch
+  pull_request:
+    branches:
+      - '**'  # Trigger for pull requests on all branches
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up .NET Core 8
+      - name: Setup .NET Core 8
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+
+      # Step 3: Restore dependencies
+      - name: Restore dependencies
+        run: dotnet restore
+
+      # Step 4: Build the application
+      - name: Build application
+        run: dotnet build --configuration Release --no-restore
+
+      # Step 5: Run tests
+      - name: Run tests
+        run: dotnet test --configuration Release --no-build --verbosity normal
+
+      # Step 6: Get the latest commit author
+      - name: Get latest commit author
+        id: commit-info
+        run: |
+          echo "author=$(git log -1 --pretty=format:'%an <%ae>')" >> $GITHUB_ENV
+
+      # Step 7: Log the author in the workflow
+      - name: Log author
+        run: echo "The last change was made by ${{ env.author }}"
+
+      # Step 8: (Optional) Append author and timestamp to a log file
+      - name: Update changelog
+        run: |
+          echo "Change made by ${{ env.author }} on $(date)" >> changelog.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add changelog.txt
+          git commit -m "Update changelog with latest change"
+          git push
