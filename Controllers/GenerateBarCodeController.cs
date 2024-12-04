@@ -32,8 +32,6 @@ namespace Hospitalmicroservices.Controllers
                         Margin = 1      // Margin around the barcode
                     }
                 };
-
-                // Generate the barcode from the input string (content)
                 var pixelData = barcodeWriter.Write(content);
 
                 // Convert pixel data to an image (PNG format)
