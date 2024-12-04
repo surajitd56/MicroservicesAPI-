@@ -14,8 +14,8 @@ jobs:
 
     steps:
       # Step 1: Check out the repository
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Suraj
+        uses: surajitd56
 
       # Step 2: Set up .NET Core 8
       - name: Setup .NET Core 8
