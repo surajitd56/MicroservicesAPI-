@@ -1,0 +1,60 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/v1/ExpenseVoucher/GetApprovalBy",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5098
+        }
+      ],
+      "FileCacheOptions": {
+        "TtlSeconds": 10
+      },
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "Period": "10s",
+        "PeriodTimespan": 10,
+        "Limit": 100
+      },
+      "UpstreamPathTemplate": "/api/v1/ExpenseVoucher/GetApprovalBy",
+      "UpstreamHttpMethod": [ "Get" ],
+      "LoadBalancerOptions": {
+
+        "Type": "RoundRobin"
+
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/ExpenseVoucher/GetExpenceHead",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5098
+        }
+      ],
+      "FileCacheOptions": {
+        "TtlSeconds": 10
+      },
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "Period": "10s",
+        "PeriodTimespan": 10,
+        "Limit": 100
+      },
+      "UpstreamPathTemplate": "/api/v1/ExpenseVoucher/GetExpenceHead",
+      "UpstreamHttpMethod": [ "Get" ],
+      "LoadBalancerOptions": {
+
+        "Type": "RoundRobin"
+
+      }
+    }
+  ],
+
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:5000"
+  }
+}
